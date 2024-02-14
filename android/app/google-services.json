@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "101842330432",
+    "project_id": "careerclimb-98878",
+    "storage_bucket": "careerclimb-98878.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101842330432:android:5d3cff27618b50a69550a5",
+        "android_client_info": {
+          "package_name": "com.example.campus_recruitment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMi36cPou5EJ-N-LgHOmG5OFKdcHEMi88"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
