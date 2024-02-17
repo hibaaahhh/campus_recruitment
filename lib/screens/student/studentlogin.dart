@@ -88,7 +88,7 @@ class _StudentLogInState extends State<StudentLogIn> {
                             });
                           },
                           child: Icon(
-                            obscurePassword
+                            obscurePassword == false
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                             color: Colors.black,
@@ -97,6 +97,7 @@ class _StudentLogInState extends State<StudentLogIn> {
                       ),
                       style: const TextStyle(color: Colors.black),
                       obscureText: obscurePassword,
+                      maxLength: 10,
                     ),
                   ),
                   const SizedBox(

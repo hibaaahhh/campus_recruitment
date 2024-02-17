@@ -124,12 +124,7 @@ var firestore = FirebaseFirestore.instance;
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const StudentBottomNavigation(),
-                      ),
-                    );
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>const StudentBottomNavigation(),), (route) => false,);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,

@@ -89,7 +89,7 @@ class _AdminLoginState extends State<AdminLogin> {
                               });
                             },
                             child: Icon(
-                              obscurePassword
+                              obscurePassword == false
                                   ? Icons.visibility
                                   : Icons.visibility_off,
                               color: Colors.black,
