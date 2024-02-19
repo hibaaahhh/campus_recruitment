@@ -5,6 +5,7 @@ import 'package:campus_recruitment/screens/company/CompanyShowProfile.dart';
 import 'package:campus_recruitment/screens/company/auth_service.dart';
 import 'package:campus_recruitment/screens/company/companyabout.dart';
 import 'package:campus_recruitment/screens/company/notificationpage.dart';
+import 'package:campus_recruitment/screens/company/posted_jobs.dart';
 import 'package:campus_recruitment/screens/company/viewshortlisted.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,8 +16,13 @@ import 'package:image_picker/image_picker.dart';
 class Company {
   final String companyname;
   final String email;
+  final String logoUrl;
 
-  Company({required this.companyname, required this.email});
+  Company({
+    required this.companyname,
+    required this.email,
+    required this.logoUrl,
+  });
 }
 
 class CompanyProfilePage extends StatefulWidget {
@@ -56,9 +62,9 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
 
       if (snapshot.exists) {
         _company = Company(
-          companyname: snapshot.get('companyname'),
-          email: snapshot.get('email'),
-        );
+            companyname: snapshot.get('companyname'),
+            email: snapshot.get('email'),
+            logoUrl: snapshot.get('userlogo') ?? '');
       }
     } catch (e) {
       print('Error fetching company details: $e');
@@ -79,10 +85,11 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
   Future<void> _saveImageToFirebase() async {
     try {
       if (_pickedImage != null) {
+        SettableMetadata metadata = SettableMetadata(contentType: 'image/jpeg');
         // Upload image to Firebase Storage
         final Reference storageRef =
             FirebaseStorage.instance.ref().child('user_logos/${_user!.uid}');
-        await storageRef.putFile(_pickedImage!);
+        await storageRef.putFile(_pickedImage!, metadata);
 
         // Get the download URL
         final String downloadURL = await storageRef.getDownloadURL();
@@ -129,27 +136,18 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                             children: [
                               // Center profile icon with image picker
                               GestureDetector(
-                                onTap: () {
-                                  _pickImage()
+                                onTap: () async {
+                                  await _pickImage()
                                       .then((value) => _saveImageToFirebase());
+                                  setState(() {});
                                 },
                                 child: CircleAvatar(
                                   radius: 80,
                                   backgroundColor: Colors.grey,
-                                  child: _pickedImage != null
-                                      ? ClipOval(
-                                          child: Image.file(
-                                            _pickedImage!,
-                                            width: 160,
-                                            height: 160,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.business,
-                                          size: 80,
-                                          color: Colors.white,
-                                        ),
+                                  backgroundImage: _company!.logoUrl == ''
+                                      ? const AssetImage('assets/person.png')
+                                      : NetworkImage(_company!.logoUrl)
+                                          as ImageProvider,
                                 ),
                               ),
                               const SizedBox(height: 30),
@@ -253,7 +251,25 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const ShortListCandidates()),
+                                              ShortListCandidates(
+                                                companyName:
+                                                    _company!.companyname,
+                                              )),
+                                    );
+                                  },
+                                ),
+                              ),
+                              Card(
+                                child: ListTile(
+                                  leading:
+                                      const Icon(Icons.work_history_outlined),
+                                  title: const Text('Posted Jobs'),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const PostedJobs()),
                                     );
                                   },
                                 ),

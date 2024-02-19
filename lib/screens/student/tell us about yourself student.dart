@@ -275,6 +275,7 @@ class _TellusstudentState extends State<Tellusstudent> {
             'qualification': qualificationcontroller.text,
             'skill': skillcontroller.text,
             'pincode': pincodecontroller.text,
+            'field': null,
           });
         } else {
           // Create a new document if it doesn't exist

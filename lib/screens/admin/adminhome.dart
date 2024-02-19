@@ -5,6 +5,7 @@ import 'package:campus_recruitment/screens/admin/registerdcompanies.dart';
 import 'package:campus_recruitment/screens/admin/registerdusers.dart';
 import 'package:campus_recruitment/screens/student/start.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -59,6 +60,7 @@ class _AdminHomeState extends State<AdminHome> {
     XFile? pickedImage;
 
     final picker = ImagePicker();
+    final addEventKey = GlobalKey<FormState>();
 
     showDialog<void>(
       context: context,
@@ -68,70 +70,88 @@ class _AdminHomeState extends State<AdminHome> {
           return AlertDialog(
             title: const Text('Add Event'),
             content: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  TextField(
-                    decoration: const InputDecoration(labelText: 'Event Name'),
-                    onChanged: (value) {
-                      eventName = value;
-                    },
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                          'Event Date: ${DateFormat('dd-MM-yyyy').format(eventDate)}'),
-                      IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: eventDate,
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime(2101),
-                          );
-                          if (pickedDate != null && pickedDate != eventDate) {
-                            setState(() {
-                              eventDate = pickedDate;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text('Event Time: ${eventTime.format(context)}'),
-                      IconButton(
-                        icon: const Icon(Icons.access_time),
-                        onPressed: () async {
-                          TimeOfDay? pickedTime = await showTimePicker(
-                            context: context,
-                            initialTime: eventTime,
-                          );
-                          if (pickedTime != null && pickedTime != eventTime) {
-                            setState(() {
-                              eventTime = pickedTime;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  TextField(
-                    decoration:
-                        const InputDecoration(labelText: 'Event Location'),
-                    onChanged: (value) {
-                      eventLocation = value;
-                    },
-                  ),
-                ],
+              child: Form(
+                key:addEventKey ,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      validator: (value) {
+                        if (value==null||value.isEmpty) {
+                          return '*required field';
+                        }else{
+                          return null;
+                        }
+                      },
+                      decoration: const InputDecoration(labelText: 'Event Name'),
+                      onChanged: (value) {
+                        eventName = value;
+                      },
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                            'Event Date: ${DateFormat('dd-MM-yyyy').format(eventDate)}'),
+                        IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: eventDate,
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2101),
+                            );
+                            if (pickedDate != null && pickedDate != eventDate) {
+                              setState(() {
+                                eventDate = pickedDate;
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text('Event Time: ${eventTime.format(context)}'),
+                        IconButton(
+                          icon: const Icon(Icons.access_time),
+                          onPressed: () async {
+                            TimeOfDay? pickedTime = await showTimePicker(
+                              context: context,
+                              initialTime: eventTime,
+                            );
+                            if (pickedTime != null && pickedTime != eventTime) {
+                              setState(() {
+                                eventTime = pickedTime;
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    TextFormField(
+                       validator: (value) {
+                        if (value==null||value.isEmpty) {
+                          return '*required field';
+                        }else{
+                          return null;
+                        }
+                      },
+                      decoration:
+                          const InputDecoration(labelText: 'Event Location'),
+                      onChanged: (value) {
+                        eventLocation = value;
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             actions: <Widget>[
               TextButton(
                 child: const Text('Add'),
                 onPressed: () async {
-                  final eventCollection =
+                  if (addEventKey.currentState!.validate()) {
+                     final eventCollection =
                       FirebaseFirestore.instance.collection('events');
 
                   final ref = await eventCollection.add({
@@ -147,6 +167,8 @@ class _AdminHomeState extends State<AdminHome> {
                   await ref.update({'eventid': eventid});
 
                   Navigator.of(context).pop();
+                  }
+                 
                 },
               ),
               TextButton(
@@ -164,6 +186,8 @@ class _AdminHomeState extends State<AdminHome> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        '///////////////////Admin id : ${FirebaseAuth.instance.currentUser!.uid}');
     return Scaffold(
       appBar: AppBar(
         title: const Text("Campus-Recruitment-Admin"),
@@ -210,12 +234,13 @@ class _AdminHomeState extends State<AdminHome> {
               leading: const Icon(Icons.logout),
               title: const Text("Logout"),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const StartPage(),
-                  ),
-                );
+                FirebaseAuth.instance
+                    .signOut()
+                    .then((value) => Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const StartPage(),
+                        ),
+                        (route) => false));
               },
             ),
           ],
@@ -257,8 +282,10 @@ class _AdminHomeState extends State<AdminHome> {
                                       showDialog(
                                         context: context,
                                         builder: (context) {
-                                          return AlertDialog(title: const Text('Delete Event?'),
-                                          content: const Text('Are you sure, you want to delete this event?'),
+                                          return AlertDialog(
+                                            title: const Text('Delete Event?'),
+                                            content: const Text(
+                                                'Are you sure, you want to delete this event?'),
                                             actions: [
                                               TextButton(
                                                 onPressed: () {
@@ -276,6 +303,7 @@ class _AdminHomeState extends State<AdminHome> {
                                                       eventCollection.doc(
                                                           event['eventid']);
                                                   await eventDoc.delete();
+                                                  Navigator.of(context).pop();
                                                 },
                                                 child: const Text('Delete'),
                                               ),

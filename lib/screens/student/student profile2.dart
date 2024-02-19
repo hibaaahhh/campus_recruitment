@@ -103,15 +103,18 @@ class _StudentProfile2State extends State<StudentProfile2> {
     }
   }
 
+  String? proPic;
   Future<String> _uploadFile(File file, String storageFolder) async {
     try {
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      SettableMetadata metadata = SettableMetadata(contentType: 'image/jpeg');
       Reference storageReference =
           FirebaseStorage.instance.ref().child('$storageFolder/$fileName');
-      UploadTask uploadTask = storageReference.putFile(file);
+      UploadTask uploadTask = storageReference.putFile(file, metadata);
       await uploadTask.whenComplete(() => null);
 
       String downloadUrl = await storageReference.getDownloadURL();
+      proPic = downloadUrl;
       return downloadUrl;
     } catch (e) {
       print('Error uploading file: $e');
@@ -189,31 +192,7 @@ class _StudentProfile2State extends State<StudentProfile2> {
                         ),
                         child: Stack(
                           children: [
-                            Positioned(
-                              top: 16,
-                              right: 16,
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const StudentProfile(),
-                                    ),
-                                  );
-                                },
-                                style: TextButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                ),
-                                child: const Text(
-                                  "Done",
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
+                           
                             Center(
                               child: GestureDetector(
                                 onTap: () {
@@ -361,19 +340,20 @@ class _StudentProfile2State extends State<StudentProfile2> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 16),
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    pickResume();
-                                  },
-                                  icon: const Icon(Icons.attach_file),
-                                  label: const Text('Add Resume'),
-                                ),
+                                // const SizedBox(width: 16),
+                                // ElevatedButton.icon(
+                                //   onPressed: () {
+                                //     pickResume();
+                                //   },
+                                //   icon: const Icon(Icons.attach_file),
+                                //   label: const Text('Add Resume'),
+                                // ),
                               ],
                             ),
+                          const  SizedBox(height: 20,),
                             ElevatedButton(
-                              onPressed: ()async {
-                              await  _updateUserDetails();
+                              onPressed: () async {
+                                await _updateUserDetails();
                                 Navigator.of(context).pop(true);
                               },
                               child: const Text('Done'),

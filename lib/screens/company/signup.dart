@@ -14,6 +14,8 @@ class _CompanyRegisterState extends State<CompanyRegister> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
+  bool obscurePassword = true;
+  bool obscureConfrmPassword = true;
 
   var companyNameController = TextEditingController();
   var companyemailController = TextEditingController();
@@ -21,6 +23,7 @@ class _CompanyRegisterState extends State<CompanyRegister> {
   var confirmPasswordController = TextEditingController();
   var addressController = TextEditingController();
   var companyLicNo = TextEditingController();
+  var phoneNoController = TextEditingController();
   List<bool> isCheckedList = [false]; // Initial value
 
   Future<void> _createAccount(BuildContext context) async {
@@ -49,10 +52,13 @@ class _CompanyRegisterState extends State<CompanyRegister> {
             .collection('companies')
             .doc(userCredential.user!.uid)
             .set({
+          'companyId': userCredential.user!.uid,
           'companyname': companyNameController.text,
           'email': companyemailController.text,
           'address': addressController.text,
-          'companyLicNo':companyLicNo.text,
+          'companyLicNo': companyLicNo.text,
+          'phoneNo': phoneNoController.text,
+          'userlogo':null
         });
 
         // Navigate to the next screen or perform any other action
@@ -100,7 +106,7 @@ class _CompanyRegisterState extends State<CompanyRegister> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '*this field is required';
-                      }else{
+                      } else {
                         return null;
                       }
                     },
@@ -115,7 +121,7 @@ class _CompanyRegisterState extends State<CompanyRegister> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '*this field is required';
-                      }else{
+                      } else {
                         return null;
                       }
                     },
@@ -130,7 +136,24 @@ class _CompanyRegisterState extends State<CompanyRegister> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '*this field is required';
-                      }else{
+                      } else {
+                        return null;
+                      }
+                    },
+                    maxLength: 10,
+                    keyboardType: TextInputType.phone,
+                    controller: phoneNoController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Phone',
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '*this field is required';
+                      } else {
                         return null;
                       }
                     },
@@ -145,40 +168,67 @@ class _CompanyRegisterState extends State<CompanyRegister> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '*this field is required';
-                      }else{
+                      } else {
                         return null;
                       }
                     },
                     controller: passwordController,
-                    decoration: const InputDecoration(
+                    decoration:  InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Enter Password',
+                       suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                obscurePassword = !obscurePassword;
+                              });
+                            },
+                            child: Icon(
+                              obscurePassword == false
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black,
+                            ),
+                          ),
                     ),
+                    obscureText: obscurePassword,
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '*this field is required';
-                      }else if(value != passwordController.text){
+                      } else if (value != passwordController.text) {
                         return "Password didnot match";
-                      }
-                      else{
+                      } else {
                         return null;
                       }
                     },
                     controller: confirmPasswordController,
-                    decoration: const InputDecoration(
+                    decoration:  InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Confirm Password',
+                      suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                obscureConfrmPassword = !obscureConfrmPassword;
+                              });
+                            },
+                            child: Icon(
+                              obscureConfrmPassword == false
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black,
+                            ),
+                          ),
                     ),
+                    obscureText: obscureConfrmPassword,
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '*this field is required';
-                      }else{
+                      } else {
                         return null;
                       }
                     },
