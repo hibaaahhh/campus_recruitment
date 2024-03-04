@@ -106,6 +106,7 @@ class _TellusstudentState extends State<Tellusstudent> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: TextFormField(
+                          maxLength: 3,
                           controller: cgpaController,
                           decoration: const InputDecoration(
                             hintText: "CGPA",
@@ -178,6 +179,7 @@ class _TellusstudentState extends State<Tellusstudent> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: TextFormField(
+                          maxLength: 6,
                           controller: pincodecontroller,
                           decoration: const InputDecoration(
                             hintText: "Pincode",

@@ -43,9 +43,12 @@ class JObview1 extends StatefulWidget {
 class _JObview1State extends State<JObview1> {
   String? description;
   String? expectedSkills;
+  String? maxSalary;
+  String? minSalary;
   String? about;
   String? phone;
   String? email;
+  bool immediateStart = false;
 
   @override
   void initState() {
@@ -55,9 +58,10 @@ class _JObview1State extends State<JObview1> {
 
   Future fetchDataFromFirebase() async {
     try {
+      print(immediateStart);
       var snapshot = await FirebaseFirestore.instance
           .collection('jobs')
-          .where('companyname', isEqualTo: widget.jobDetails.companyname)
+          .where('companyname', isEqualTo: widget.jobDetails.companyname).where('jobTitle',isEqualTo: widget.jobDetails.jobTitle,)
           .limit(1)
           .get();
 
@@ -67,8 +71,14 @@ class _JObview1State extends State<JObview1> {
 
         // Ensure that the required fields exist in the document
         if (data.containsKey('description') &&
-            data.containsKey('expectedSkills')) {
+            data.containsKey('expectedSkills') &&
+            data.containsKey('expectedSalary')&&
+            data.containsKey('currentSalary')&&
+            data.containsKey('immediateStart')) {
           description = data['description'] ?? 'N/A';
+          maxSalary = data['expectedSalary'] ?? 'N/A';
+          minSalary = data['currentSalary'] ?? 'N/A';
+          immediateStart = data['immediateStart'] ?? 'N/A';
 
           // Check the type of 'expectedSkills' and convert if necessary
           if (data['expectedSkills'] is List<dynamic>) {
@@ -230,6 +240,22 @@ class _JObview1State extends State<JObview1> {
                                           'Skills: $expectedSkills',
                                           style: const TextStyle(fontSize: 16),
                                         ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Min Salary: $minSalary',
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Max Salary: $maxSalary',
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        const SizedBox(height: 10),
+                                       immediateStart == true?const Text(
+                                          'Looking for immediate joiners',
+                                          style:  TextStyle(fontSize: 16),
+                                        ):const Text(''),
+
                                         const SizedBox(height: 10),
                                         Center(
                                           child: ElevatedButton(

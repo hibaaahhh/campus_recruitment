@@ -2,6 +2,7 @@ import 'package:campus_recruitment/screens/company/Viewresume.dart';
 import 'package:campus_recruitment/screens/company/notificationpage.dart';
 import 'package:campus_recruitment/screens/company/view_resume.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -16,139 +17,182 @@ class _StudentListState extends State<StudentList> {
   TextEditingController searchController = TextEditingController();
   List<QueryDocumentSnapshot> appliedJobs = [];
 
+  String companyname = '';
+  String status = '';
+
+  Future<void> _loadCompanyInfo() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        DocumentSnapshot companySnapshot = await FirebaseFirestore.instance
+            .collection('companies')
+            .doc(user.uid)
+            .get();
+
+        if (companySnapshot.exists) {
+          companyname = companySnapshot['companyname'];
+        }
+      }
+    } catch (e) {
+      print("Error loading company information: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 50),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.search,
-                      color: Colors.purpleAccent,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      showSearch(
-                        context: context,
-                        delegate: StudentSearchDelegate(appliedJobs),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.notifications_none_outlined,
-                      color: Colors.purpleAccent,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const NotificationPage(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(right: 130),
-            child: Text(
-              'Recent Applicants',
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 30),
-            ),
-          ),
-          Expanded(
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('applied_jobs')
-                  .snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  print("Error: ${snapshot.error}");
-                  return const Center(
-                    child: Text("Error loading data"),
-                  );
-                }
-
-                appliedJobs = snapshot.data!.docs;
-
-                return appliedJobs.isEmpty
-                    ? const Center(
-                        child: Text('No Applications'),
-                      )
-                    : ListView.builder(
-                        itemCount: appliedJobs.length,
-                        itemBuilder: (context, index) {
-                          var username = appliedJobs[index]['username'];
-                          var jobTitle = appliedJobs[index]['jobName'];
-                          var proPicURL = appliedJobs[index]['profilePicUrl'];
-
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Card(
-                              shape: const RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.grey),
+      body: FutureBuilder(
+          future: _loadCompanyInfo(),
+          builder: (context, snapshot) {
+            return snapshot.connectionState == ConnectionState.waiting
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 50),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.search,
+                                  color: Colors.purpleAccent,
+                                  size: 30,
+                                ),
+                                onPressed: () {
+                                  showSearch(
+                                    context: context,
+                                    delegate:
+                                        StudentSearchDelegate(appliedJobs),
+                                  );
+                                },
                               ),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundImage: proPicURL == null
-                                      ? const AssetImage('assets/person.png')
-                                      : NetworkImage(proPicURL)
-                                          as ImageProvider,
-                                  // backgroundColor: Colors.purpleAccent,
-                                  // child: Icon(Icons.person,
-                                  //     size: 30, color: Colors.white),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.notifications_none_outlined,
+                                  color: Colors.purpleAccent,
+                                  size: 30,
                                 ),
-                                title: Text(username),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(jobTitle),
-                                    // Add any other details you want to display here
-                                  ],
-                                ),
-                                trailing:
-                                    const Icon(Icons.keyboard_arrow_right),
-                                onTap: () {
+                                onPressed: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          CompanyViewStudentProfile(
-                                        username: username,
-                                        jobTitle: jobTitle,
-                                        proPicURL: proPicURL,
-                                      ),
+                                          const NotificationPage(),
                                     ),
                                   );
                                 },
                               ),
                             ),
-                          );
-                        },
-                      );
-              },
-            ),
-          ),
-        ],
-      ),
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(right: 130),
+                        child: Text(
+                          'Recent Applicants',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal, fontSize: 30),
+                        ),
+                      ),
+                      Expanded(
+                        child: StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('applied_jobs')
+                              .where('companyname', isEqualTo: companyname).where('status',isEqualTo: 'Pending')
+                              .snapshots(),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+
+                            if (snapshot.hasError) {
+                              print("Error: ${snapshot.error}");
+                              return const Center(
+                                child: Text("Error loading data"),
+                              );
+                            }
+
+                            appliedJobs = snapshot.data!.docs;
+
+                            return appliedJobs.isEmpty
+                                ? const Center(
+                                    child: Text('No Applications'),
+                                  )
+                                : ListView.builder(
+                                    itemCount: appliedJobs.length,
+                                    itemBuilder: (context, index) {
+                                      var username =
+                                          appliedJobs[index]['username'];
+                                      var jobTitle =
+                                          appliedJobs[index]['jobName'];
+                                      var proPicURL =
+                                          appliedJobs[index]['profilePicUrl'];
+
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Card(
+                                          shape: const RoundedRectangleBorder(
+                                            side:
+                                                BorderSide(color: Colors.grey),
+                                          ),
+                                          child: ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundImage: proPicURL == null
+                                                  ? const AssetImage(
+                                                      'assets/person.png')
+                                                  : NetworkImage(proPicURL)
+                                                      as ImageProvider,
+                                              // backgroundColor: Colors.purpleAccent,
+                                              // child: Icon(Icons.person,
+                                              //     size: 30, color: Colors.white),
+                                            ),
+                                            title: Text(username),
+                                            subtitle: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(jobTitle),
+                                                // Add any other details you want to display here
+                                              ],
+                                            ),
+                                            trailing: const Icon(
+                                                Icons.keyboard_arrow_right),
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CompanyViewStudentProfile(
+                                                    username: username,
+                                                    jobTitle: jobTitle,
+                                                    proPicURL: proPicURL,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+          }),
     );
   }
 }

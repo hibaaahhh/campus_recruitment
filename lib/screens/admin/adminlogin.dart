@@ -192,13 +192,20 @@ class _AdminLoginState extends State<AdminLogin> {
 
   Future adminLogin(String username, String password) async {
     try {
-      await firebaseAuth.signInWithEmailAndPassword(
+      await  firebaseAuth.signInWithEmailAndPassword(
           email: username, password: password);
-      Navigator.of(context).pushAndRemoveUntil(
+          if (firebaseAuth.currentUser!.uid == 'XMFYlsf1pXgd3wcdDWoo4mumQzU2') {
+             Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const AdminHome(),
           ),
           (route) => false);
+          }else{
+              ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid User')));
+          }
+          
+     
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Invalid email / password')));

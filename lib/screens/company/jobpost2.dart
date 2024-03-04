@@ -133,6 +133,7 @@ class _Jobpost2State extends State<Jobpost2> {
                       value: immediateStart,
                       onChanged: (value) {
                         setState(() {
+                          print('immediate Joining : $value');
                           immediateStart = value;
                         });
                       },

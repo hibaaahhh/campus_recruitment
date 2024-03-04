@@ -2,6 +2,7 @@
 
 import 'package:campus_recruitment/screens/company/bottomnavigation.dart';
 import 'package:campus_recruitment/screens/company/signup.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -203,13 +204,21 @@ class _CompanyLogInState extends State<CompanyLogIn> {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       if (userCredential.user!.emailVerified) {
-        _showSuccessSnackBar('Login Successfull');
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => const CompanyBottomNavigations(),
-          ),
-          (route) => false,
-        );
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('companies')
+            .doc(userCredential.user!.uid)
+            .get();
+        if (userSnapshot.exists) {
+          _showSuccessSnackBar('Login Successfull');
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const CompanyBottomNavigations(),
+            ),
+            (route) => false,
+          );
+        }else{
+          _showErrorSnackBar('Invalid User');
+        }
       } else {
         _showErrorSnackBar('Please verify your email to login');
       }

@@ -278,7 +278,7 @@ class _StudentProfile2State extends State<StudentProfile2> {
                               // initialValue: _field.text,
                               controller: _field,
                               decoration: InputDecoration(
-                                labelText: 'Field',
+                                labelText: 'position',
                                 border: _customBorder(),
                               ),
                             ),

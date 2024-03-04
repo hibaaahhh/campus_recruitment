@@ -158,7 +158,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                                     });
                                   },
                                   decoration: InputDecoration(
-                                    labelText: 'Field',
+                                    labelText: 'Position',
                                     border: _customBorder(),
                                   ),
                                 ),

@@ -1,5 +1,6 @@
 import 'package:campus_recruitment/screens/student/bottom%20navigation.dart';
 import 'package:campus_recruitment/screens/student/student_signup.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -106,16 +107,11 @@ class _StudentLogInState extends State<StudentLogIn> {
                   GestureDetector(
                     onTap: () async {
                       if (_formkey.currentState!.validate()) {
-                        bool isLoginSuccessful = await authenticateUser(
+                        await authenticateUser(
                             emailController.text,
                             userPasswordController.text,
                             context);
 
-                        if (isLoginSuccessful) {
-                          _showSuccessSnackBar("Login successful!");
-                        } else {
-                          _showErrorSnackBar("Invalid email or password");
-                        }
                       }
                     },
                     child: Center(
@@ -192,11 +188,18 @@ class _StudentLogInState extends State<StudentLogIn> {
       if (userId != null) {
         print('User ID: $userId');
         if (FirebaseAuth.instance.currentUser!.emailVerified == true) {
-          Navigator.of(context).pushAndRemoveUntil(
+           DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+           if (userSnapshot.exists) {
+              Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) => const StudentBottomNavigation(),
               ),
               (route) => false);
+              _showSuccessSnackBar('Login Successfull');
+           }else{
+            _showErrorSnackBar('Invalid User');
+           }
+         
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Please verify your email')));
@@ -210,10 +213,15 @@ class _StudentLogInState extends State<StudentLogIn> {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         // Handle invalid email or password
+         ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Invalid email or password')));
         print('Invalid email or password');
       } else {
         // Handle other exceptions
         print('Error: $e');
+         ScaffoldMessenger.of(context).showSnackBar(
+               SnackBar(content: Text('Login error : $e')));
+        
       }
       return false;
     }

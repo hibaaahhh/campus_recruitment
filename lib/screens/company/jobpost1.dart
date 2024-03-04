@@ -83,6 +83,25 @@ final _formkey =GlobalKey<FormState>();
                     color: Colors.black,
                   ),
                 ),
+                 Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: (value) {
+                      if(value!.isEmpty){
+                        return "The field is required";
+                      }else {
+                        return null;
+                      }
+                    },
+                    controller: positionController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      hintText: "Enter Position",
+                    ),
+                  ),
+                ),
                 // TextFormField(
                 //   controller: positionController,
                 //    decoration: InputDecoration(
@@ -93,26 +112,26 @@ final _formkey =GlobalKey<FormState>();
                 //     ),
 
                 // ),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  icon: const Icon(Icons.keyboard_arrow_down_sharp),
-                  value: dropdownValue,
-                  items: positions
-                      .map((String position) => DropdownMenuItem<String>(
-                            value: position,
-                            child: Text(position),
-                          ))
-                      .toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownValue = newValue;
-                    });
-                  },
-                ),
+                // DropdownButtonFormField<String>(
+                //   decoration: InputDecoration(
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(10),
+                //     ),
+                //   ),
+                //   icon: const Icon(Icons.keyboard_arrow_down_sharp),
+                //   value: dropdownValue,
+                //   items: positions
+                //       .map((String position) => DropdownMenuItem<String>(
+                //             value: position,
+                //             child: Text(position),
+                //           ))
+                //       .toList(),
+                //   onChanged: (String? newValue) {
+                //     setState(() {
+                //       dropdownValue = newValue;
+                //     });
+                //   },
+                // ),
                 const Text(
                   "Category",
                   style: TextStyle(
@@ -121,25 +140,25 @@ final _formkey =GlobalKey<FormState>();
                     color: Colors.black,
                   ),
                 ),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+               
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: (value) {
+                      if(value!.isEmpty){
+                        return "The field is required";
+                      }else {
+                        return null;
+                      }
+                    },
+                    controller: categoryController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      hintText: "Enter Category",
                     ),
                   ),
-                  icon: const Icon(Icons.keyboard_arrow_down_sharp),
-                  value: dropdownValues,
-                  items: categories
-                      .map((String category) => DropdownMenuItem<String>(
-                            value: category,
-                            child: Text(category),
-                          ))
-                      .toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownValues = newValue;
-                    });
-                  },
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -191,7 +210,7 @@ final _formkey =GlobalKey<FormState>();
                           String address =
                               companyData['address'] ?? 'Unknown Company';
                           String email =
-                              companyData['email'] ?? 'Unknown C ompany';
+                              companyData['email'] ?? 'Unknown Company';
                           String contact =
                               companyData['contact'] ?? 'Unknown Company';
                           String website =
@@ -206,8 +225,8 @@ final _formkey =GlobalKey<FormState>();
                             'contact': contact,
                             'website': website,
                             'jobTitle': jobTitleController.text,
-                            'position': dropdownValue,
-                            'category': dropdownValues,
+                            'position': positionController.text,
+                            'category': categoryController.text,
                             'description': descriptionController.text,
                             // Add more fields as needed
                           };

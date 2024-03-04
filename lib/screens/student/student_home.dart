@@ -138,51 +138,51 @@ class _StudentHomeState extends State<StudentHome> {
                                     ],
                                   ),
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 20, left: 15),
-                                  child: Container(
-                                    height: 50,
-                                    width: constraints.maxWidth > 550
-                                        ? null
-                                        : constraints.maxWidth,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: const Color(0XFFD3D3D3),
-                                    ),
-                                    child: const Row(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Icon(Icons.search),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: EdgeInsets.only(left: 8.0),
-                                            child: TextField(
-                                              decoration: InputDecoration(
-                                                hintText: 'Job Search',
-                                                border: InputBorder.none,
-                                                hintStyle: TextStyle(
-                                                    color: Colors.black),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(right: 8.0),
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.blue,
-                                            child: Icon(
-                                              Icons.sort_outlined,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                // Padding(
+                                //   padding:
+                                //       const EdgeInsets.only(top: 20, left: 15),
+                                //   child: Container(
+                                //     height: 50,
+                                //     width: constraints.maxWidth > 550
+                                //         ? null
+                                //         : constraints.maxWidth,
+                                //     decoration: BoxDecoration(
+                                //       borderRadius: BorderRadius.circular(20),
+                                //       color: const Color(0XFFD3D3D3),
+                                //     ),
+                                //     child: const Row(
+                                //       children: [
+                                //         Padding(
+                                //           padding: EdgeInsets.all(8.0),
+                                //           child: Icon(Icons.search),
+                                //         ),
+                                //         Expanded(
+                                //           child: Padding(
+                                //             padding: EdgeInsets.only(left: 8.0),
+                                //             child: TextField(
+                                //               decoration: InputDecoration(
+                                //                 hintText: 'Job Search',
+                                //                 border: InputBorder.none,
+                                //                 hintStyle: TextStyle(
+                                //                     color: Colors.black),
+                                //               ),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         Padding(
+                                //           padding: EdgeInsets.only(right: 8.0),
+                                //           child: CircleAvatar(
+                                //             backgroundColor: Colors.blue,
+                                //             child: Icon(
+                                //               Icons.sort_outlined,
+                                //               color: Colors.white,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
+                                // ),
                                 Padding(
                                   padding:
                                       const EdgeInsets.only(top: 40, left: 15),
@@ -308,6 +308,7 @@ class _StudentHomeState extends State<StudentHome> {
                                                                     Text(
                                                                       job['address'] ??
                                                                           'Unknown',
+                                                                          maxLines: 2,
                                                                       style: const TextStyle(
                                                                           overflow:
                                                                               TextOverflow.ellipsis),
@@ -538,15 +539,15 @@ class _StudentHomeState extends State<StudentHome> {
                                               : 25,
                                         ),
                                       ),
-                                      Text(
-                                        'View more',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: constraints.maxWidth > 600
-                                              ? 20
-                                              : 15,
-                                        ),
-                                      ),
+                                      // Text(
+                                      //   'View more',
+                                      //   style: TextStyle(
+                                      //     color: Colors.blue,
+                                      //     fontSize: constraints.maxWidth > 600
+                                      //         ? 20
+                                      //         : 15,
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
