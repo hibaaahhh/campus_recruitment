@@ -165,6 +165,7 @@ class _CompanyRegisterState extends State<CompanyRegister> {
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
+                    maxLength: 10,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '*this field is required';
@@ -194,6 +195,7 @@ class _CompanyRegisterState extends State<CompanyRegister> {
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
+                    maxLength: 10,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '*this field is required';

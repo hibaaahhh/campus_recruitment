@@ -109,18 +109,24 @@ class _CompanyLogInState extends State<CompanyLogIn> {
                       GestureDetector(
                         onTap: () async {
                           if (_formkey.currentState!.validate()) {
-                            bool isLoginSuccessful = await authenticateUser(
-                              companyemailController.text,
-                              passwordController.text,
-                            );
+                            companyLogIn(companyemailController.text,
+                                passwordController.text);
+                            // bool isLoginSuccessful = await authenticateUser(
+                            //   companyemailController.text,
+                            //   passwordController.text,
+                            // );
 
-                            if (isLoginSuccessful) {
-                              _showSuccessSnackBar("Login successful!");
-                              
-                              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>const CompanyBottomNavigations()), (route) => false);
-                            } else {
-                              _showErrorSnackBar("Invalid email or password");
-                            }
+                            // if (isLoginSuccessful) {
+                            //   _showSuccessSnackBar("Login successful!");
+
+                            //   Navigator.of(context).pushAndRemoveUntil(
+                            //       MaterialPageRoute(
+                            //           builder: (context) =>
+                            //               const CompanyBottomNavigations()),
+                            //       (route) => false);
+                            // } else {
+                            //   _showErrorSnackBar("Invalid email or password");
+                            // }
                           }
                         },
                         child: Center(
@@ -192,24 +198,48 @@ class _CompanyLogInState extends State<CompanyLogIn> {
     );
   }
 
-  Future<bool> authenticateUser(String email, String password) async {
+  Future companyLogIn(String email, String password) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-
-      // If the above line doesn't throw an exception, the login is successful.
-      return true;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        // Handle invalid email or password
-        print('Invalid email or password');
+      if (userCredential.user!.emailVerified) {
+        _showSuccessSnackBar('Login Successfull');
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const CompanyBottomNavigations(),
+          ),
+          (route) => false,
+        );
       } else {
-        // Handle other exceptions
-        print('Error: $e');
+        _showErrorSnackBar('Please verify your email to login');
       }
-      return false;
+    } catch (e) {
+      _showErrorSnackBar('Login Error : $e');
     }
   }
+
+  // Future<bool> authenticateUser(String email, String password) async {
+  //   try {
+  //     UserCredential userCredential = await FirebaseAuth.instance
+  //         .signInWithEmailAndPassword(email: email, password: password);
+
+  //       if (userCredential.user!.emailVerified == true) {
+  //         return true;
+  //       }
+
+  //     // If the above line doesn't throw an exception, the login is successful.
+  //     // return true;
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+  //       // Handle invalid email or password
+  //       print('Invalid email or password');
+  //     } else {
+  //       // Handle other exceptions
+  //       print('Error: $e');
+  //     }
+  //     return false;
+  //   }
+  // }
 
   void _showErrorSnackBar(String errorMessage) {
     ScaffoldMessenger.of(context).showSnackBar(
