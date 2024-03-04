@@ -58,6 +58,9 @@ class _CompanyRegisterState extends State<CompanyRegister> {
           'address': addressController.text,
           'companyLicNo': companyLicNo.text,
           'phoneNo': phoneNoController.text,
+          'website': null,
+          'industry':null,
+          'about':null,
           'userlogo':null
         });
 

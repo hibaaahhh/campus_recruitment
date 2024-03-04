@@ -48,6 +48,7 @@ class _JObview1State extends State<JObview1> {
   String? about;
   String? phone;
   String? email;
+  String? website;
   bool immediateStart = false;
 
   @override
@@ -74,11 +75,13 @@ class _JObview1State extends State<JObview1> {
             data.containsKey('expectedSkills') &&
             data.containsKey('expectedSalary')&&
             data.containsKey('currentSalary')&&
-            data.containsKey('immediateStart')) {
+            data.containsKey('immediateStart')&&
+            data.containsKey('website')) {
           description = data['description'] ?? 'N/A';
           maxSalary = data['expectedSalary'] ?? 'N/A';
           minSalary = data['currentSalary'] ?? 'N/A';
           immediateStart = data['immediateStart'] ?? 'N/A';
+          website = data['website'] ?? 'N/A';
 
           // Check the type of 'expectedSkills' and convert if necessary
           if (data['expectedSkills'] is List<dynamic>) {
@@ -344,6 +347,30 @@ class _JObview1State extends State<JObview1> {
                                             ),
                                             Text(
                                               'Email: ${snapshot.data!['email']}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Text(
+                                              'Website: ${snapshot.data!['website'] == null ||snapshot.data!['website'] == "" ? "Not Available":snapshot.data!['website']}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Text(
+                                              'Industry: ${snapshot.data!['industry'] == null ||snapshot.data!['industry'] ==""  ? "Not Available":snapshot.data!['industry']}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Text(
+                                              'About: ${snapshot.data!['about'] == null || snapshot.data!['about'] == ""? "Not Available":snapshot.data!['about']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
